@@ -220,33 +220,17 @@ elif menu == "📊 CONTROLE DE ESTOQUE":
     if dados:
         # DataFrame completo
         df_estoque = []
-    for id_lote, vacina in dados.items():
-        status, cor = verificar_validade(vacina.get("validade", ""))
-        em_uso = "⭐ EM USO" if vacina.get("em_uso", False) else "⚪"
-        
-        # Calcula dias restantes
-        try:
-            data_val = datetime.strptime(vacina.get("validade", ""), "%d/%m/%Y")
-            dias_restantes = (data_val - datetime.now()).days
-            if dias_restantes < 0:
-                info_validade = f"💀 VENCIDA em {vacina.get('validade', '')}"
-            elif dias_restantes == 0:
-                info_validade = f"⚠️ VENCE HOJE! ({vacina.get('validade', '')})"
-            elif dias_restantes <= 30:
-                info_validade = f"⚠️ VENCE em {dias_restantes} dias ({vacina.get('validade', '')})"
-            else:
-                info_validade = f"✅ Válida até {vacina.get('validade', '')}"
-        except:
-            info_validade = f"❌ Data inválida: {vacina.get('validade', '')}"
-        
-        df_estoque.append({
-            "💊 Vacina": vacina["nome"],
-            "🔢 Lote": vacina["lote"],
-            "📦 Estoque": vacina.get("quantidade", 0),
-            "⚠️ Mínimo": vacina.get("minimo", 30),
-            "📅 Validade": info_validade,
-            "📌 Status": em_uso
-        })
+        for id_lote, vacina in dados.items():
+            status, cor = verificar_validade(vacina.get("validade", ""))
+            em_uso = "⭐ EM USO" if vacina.get("em_uso", False) else "⚪"
+            df_estoque.append({
+                "💊 Vacina": vacina["nome"],
+                "🔢 Lote": vacina["lote"],
+                "📦 Estoque": vacina.get("quantidade", 0),
+                "⚠️ Mínimo": vacina.get("minimo", 30),
+                "📅 Validade": status,
+                "📌 Status": em_uso
+            })
         
         df = pd.DataFrame(df_estoque)
         st.dataframe(df, use_container_width=True, hide_index=True)
