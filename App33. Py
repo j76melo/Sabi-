@@ -1,0 +1,310 @@
+import streamlit as st
+import pandas as pd
+import json
+import os
+from datetime import datetime, timedelta
+
+# Configuração da página
+st.set_page_config(
+    page_title="Sistema de Vacinas",
+    page_icon="💉",
+    layout="wide"
+)
+
+# Arquivo de dados
+ARQUIVO = "vacinas.json"
+
+# Inicializar dados na sessão
+if 'vacinas' not in st.session_state:
+    st.session_state.vacinas = carregar_dados()
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = "💉 VACINAS EM USO"
+
+def carregar_dados():
+    """Carrega os dados do arquivo JSON"""
+    try:
+        if os.path.exists(ARQUIVO):
+            with open(ARQUIVO, "r", encoding="utf-8") as f:
+                dados = json.load(f)
+                if dados:
+                    return dados
+    except:
+        pass
+    
+    # Dados padrão
+    hoje = datetime.now()
+    return {
+        "covid_a123": {
+            "nome": "COVID-19", 
+            "lote": "A123", 
+            "quantidade": 150, 
+            "minimo": 50,
+            "fabricacao": (hoje - timedelta(days=30)).strftime("%d/%m/%Y"),
+            "validade": (hoje + timedelta(days=180)).strftime("%d/%m/%Y"), 
+            "em_uso": True
+        },
+        "influenza_b456": {
+            "nome": "Influenza", 
+            "lote": "B456", 
+            "quantidade": 200, 
+            "minimo": 80,
+            "fabricacao": (hoje - timedelta(days=15)).strftime("%d/%m/%Y"),
+            "validade": (hoje + timedelta(days=120)).strftime("%d/%m/%Y"), 
+            "em_uso": True
+        },
+    }
+
+def salvar_dados():
+    """Salva os dados no arquivo JSON"""
+    try:
+        with open(ARQUIVO, "w", encoding="utf-8") as f:
+            json.dump(st.session_state.vacinas, f, ensure_ascii=False, indent=2)
+        return True
+    except:
+        return False
+
+def gerar_id(nome, lote):
+    return f"{nome}_{lote}".replace(" ", "_").lower()
+
+def verificar_validade(data_str):
+    try:
+        data_val = datetime.strptime(data_str, "%d/%m/%Y")
+        hoje = datetime.now()
+        dias = (data_val - hoje).days
+        if dias < 0:
+            return "💀 VENCIDA", "#D32F2F"
+        elif dias <= 30:
+            return f"⚠️ VENCE em {dias} dias", "#F57C00"
+        elif dias <= 90:
+            return f"📅 Vence em {dias} dias", "#FFC107"
+        else:
+            return "✅ Válida", "#388E3C"
+    except:
+        return "❌ Data inválida", "#D32F2F"
+
+def get_vacinas_em_uso():
+    return [dados for dados in st.session_state.vacinas.values() if dados.get("em_uso", False)]
+
+# ========== INTERFACE ==========
+
+# Título
+st.markdown("""
+<h1 style='text-align: center; background-color: #4A148C; color: white; padding: 20px; border-radius: 10px;'>
+    💉 SISTEMA DE ESTOQUE - VACINAS SUS
+</h1>
+""", unsafe_allow_html=True)
+
+# Menu de navegação
+menu = st.sidebar.radio(
+    "📋 MENU",
+    ["💉 VACINAS EM USO", "📊 ESTOQUE", "📜 HISTÓRICO", "ℹ️ SOBRE"]
+)
+
+# ========== PÁGINA: VACINAS EM USO ==========
+if menu == "💉 VACINAS EM USO":
+    st.markdown("### 💉 VACINAS EM USO")
+    
+    em_uso = get_vacinas_em_uso()
+    
+    if em_uso:
+        dados_tabela = []
+        for dados in em_uso:
+            dados_tabela.append({
+                "Vacina": dados["nome"],
+                "Lote": dados["lote"],
+                "Estoque": dados["quantidade"],
+                "Validade": dados["validade"]
+            })
+        df = pd.DataFrame(dados_tabela)
+        st.dataframe(df, use_container_width=True)
+    else:
+        st.info("Nenhuma vacina em uso no momento.")
+    
+    st.markdown("---")
+    st.markdown("### 🔄 ALTERAR LOTE EM USO")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        nomes_em_uso = list(set([d["nome"] for d in em_uso]))
+        if nomes_em_uso:
+            vacina_selecionada = st.selectbox("Vacina", nomes_em_uso)
+        else:
+            vacina_selecionada = st.text_input("Nome da Vacina")
+    
+    with col2:
+        novo_lote = st.text_input("Novo Lote", placeholder="Digite o novo lote")
+    
+    if st.button("🔄 ATUALIZAR LOTE", use_container_width=True):
+        if vacina_selecionada and novo_lote:
+            id_atual = None
+            for id_lote, dados in st.session_state.vacinas.items():
+                if dados.get("em_uso", False) and dados["nome"] == vacina_selecionada:
+                    id_atual = id_lote
+                    break
+            
+            if id_atual:
+                novo_id = gerar_id(vacina_selecionada, novo_lote)
+                if novo_id in st.session_state.vacinas:
+                    st.session_state.vacinas[novo_id]["em_uso"] = True
+                    st.session_state.vacinas[id_atual]["em_uso"] = False
+                else:
+                    hoje = datetime.now()
+                    st.session_state.vacinas[novo_id] = {
+                        "nome": vacina_selecionada,
+                        "lote": novo_lote,
+                        "quantidade": 0,
+                        "minimo": 30,
+                        "fabricacao": hoje.strftime("%d/%m/%Y"),
+                        "validade": (hoje + timedelta(days=365)).strftime("%d/%m/%Y"),
+                        "em_uso": True
+                    }
+                    st.session_state.vacinas[id_atual]["em_uso"] = False
+                salvar_dados()
+                st.success(f"✅ Lote alterado para '{novo_lote}'!")
+                st.rerun()
+            else:
+                st.error("Vacina não encontrada em uso!")
+        else:
+            st.error("Preencha todos os campos!")
+
+# ========== PÁGINA: ESTOQUE ==========
+elif menu == "📊 ESTOQUE":
+    st.markdown("### 📊 CONTROLE DE ESTOQUE")
+    
+    # Lista de lotes
+    dados_tabela = []
+    for id_lote, dados in st.session_state.vacinas.items():
+        status_val, cor_val = verificar_validade(dados.get("validade", ""))
+        dados_tabela.append({
+            "Vacina": dados["nome"],
+            "Lote": dados["lote"],
+            "Estoque": dados["quantidade"],
+            "Fabricação": dados.get("fabricacao", "N/A"),
+            "Validade": dados["validade"],
+            "Status": status_val,
+            "Em Uso": "⭐ SIM" if dados.get("em_uso", False) else "⚪ NÃO"
+        })
+    
+    df = pd.DataFrame(dados_tabela)
+    st.dataframe(df, use_container_width=True)
+    
+    st.markdown("---")
+    st.markdown("### ➕ ADICIONAR/EDITAR LOTE")
+    
+    with st.form("form_lote"):
+        col1, col2 = st.columns(2)
+        with col1:
+            nome = st.text_input("💊 Nome da Vacina")
+            lote = st.text_input("🔢 Lote")
+            fabricacao = st.text_input("🏭 Data de Fabricação (DD/MM/AAAA)", value=datetime.now().strftime("%d/%m/%Y"))
+        with col2:
+            validade = st.text_input("📅 Data de Validade (DD/MM/AAAA)", value=(datetime.now() + timedelta(days=365)).strftime("%d/%m/%Y"))
+            quantidade = st.number_input("📊 Quantidade", min_value=0, step=1)
+            minimo = st.number_input("⚠️ Estoque Mínimo", min_value=0, step=1, value=30)
+        
+        col1b, col2b, col3b, col4b = st.columns(4)
+        with col1b:
+            adicionar = st.form_submit_button("➕ ADICIONAR", use_container_width=True)
+        with col2b:
+            ativar = st.form_submit_button("⭐ ATIVAR", use_container_width=True)
+    
+    if adicionar:
+        if nome and lote and fabricacao and validade:
+            novo_id = gerar_id(nome, lote)
+            st.session_state.vacinas[novo_id] = {
+                "nome": nome,
+                "lote": lote,
+                "quantidade": quantidade,
+                "minimo": minimo,
+                "fabricacao": fabricacao,
+                "validade": validade,
+                "em_uso": False
+            }
+            salvar_dados()
+            st.success(f"✅ Lote '{lote}' adicionado!")
+            st.rerun()
+        else:
+            st.error("Preencha todos os campos!")
+    
+    if ativar:
+        if nome and lote:
+            for id_lote, dados in st.session_state.vacinas.items():
+                if dados["nome"] == nome:
+                    dados["em_uso"] = False
+            novo_id = gerar_id(nome, lote)
+            if novo_id in st.session_state.vacinas:
+                st.session_state.vacinas[novo_id]["em_uso"] = True
+                st.success(f"✅ Lote '{lote}' da vacina '{nome}' ativado!")
+                st.rerun()
+            else:
+                st.error("Lote não encontrado! Adicione primeiro.")
+        else:
+            st.error("Preencha nome e lote!")
+    
+    st.markdown("---")
+    st.markdown("### 📦 MOVIMENTAÇÃO DE ESTOQUE")
+    
+    with st.form("form_movimentacao"):
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            nome_mov = st.text_input("Nome da Vacina", key="mov_nome")
+        with col2:
+            lote_mov = st.text_input("Lote", key="mov_lote")
+        with col3:
+            quantidade_mov = st.number_input("Quantidade", min_value=1, step=1, key="mov_qtde")
+        
+        col1b, col2b = st.columns(2)
+        with col1b:
+            entrada = st.form_submit_button("📥 ENTRADA", use_container_width=True)
+        with col2b:
+            saida = st.form_submit_button("📤 BAIXA", use_container_width=True)
+    
+    if entrada:
+        for id_lote, dados in st.session_state.vacinas.items():
+            if dados["nome"] == nome_mov and dados["lote"] == lote_mov:
+                dados["quantidade"] += quantidade_mov
+                salvar_dados()
+                st.success(f"✅ {quantidade_mov} unidades adicionadas!")
+                st.rerun()
+                break
+        else:
+            st.error("Lote não encontrado!")
+    
+    if saida:
+        for id_lote, dados in st.session_state.vacinas.items():
+            if dados["nome"] == nome_mov and dados["lote"] == lote_mov:
+                if dados["quantidade"] >= quantidade_mov:
+                    dados["quantidade"] -= quantidade_mov
+                    salvar_dados()
+                    st.success(f"✅ {quantidade_mov} unidades retiradas!")
+                    st.rerun()
+                else:
+                    st.error(f"Estoque insuficiente! Disponível: {dados['quantidade']}")
+                break
+        else:
+            st.error("Lote não encontrado!")
+
+# ========== PÁGINA: HISTÓRICO ==========
+elif menu == "📜 HISTÓRICO":
+    st.markdown("### 📜 HISTÓRICO DE MOVIMENTAÇÕES")
+    st.info("Histórico será implementado em breve com banco de dados")
+
+# ========== PÁGINA: SOBRE ==========
+else:
+    st.markdown("### ℹ️ SOBRE")
+    st.markdown("""
+    **💉 SISTEMA DE ESTOQUE - VACINAS SUS**
+    
+    Versão: 6.0 - Web
+    
+    **Funcionalidades:**
+    - ✅ Vacinas EM USO na primeira tela
+    - ✅ Múltiplos lotes para mesma vacina
+    - ✅ Ativar lote para uso
+    - ✅ Data de FABRICAÇÃO
+    - ✅ Data de VALIDADE
+    - ✅ Controle de estoque
+    - ✅ Interface web responsiva
+    
+    **Dados salvos em:** GitHub (arquivo JSON)
+    """)
