@@ -1,0 +1,178 @@
+{
+  "covid-19_nc1906": {
+    "nome": "COVID-19",
+    "lote": "NC1906",
+    "quantidade": 100,
+    "minimo": 30,
+    "validade": "01/02/2027",
+    "em_uso": true
+  },
+  "febre_amarela_l255vfa024w": {
+    "nome": "FEBRE AMARELA",
+    "lote": "L255VFA024W",
+    "quantidade": 0,
+    "minimo": 30,
+    "validade": "01/05/2028",
+    "em_uso": true
+  },
+  "influenza_260127400": {
+    "nome": "INFLUENZA",
+    "lote": "260127400",
+    "quantidade": 0,
+    "minimo": 30,
+    "validade": "01/02/2027",
+    "em_uso": true
+  },
+  "dupla_adulto_2335l006c": {
+    "nome": "DUPLA ADULTO",
+    "lote": "2335L006C",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/02/2028",
+    "em_uso": false
+  },
+  "dtp_infantil_000000": {
+    "nome": "DTP INFANTIL",
+    "lote": "000000",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "31/12/2026",
+    "em_uso": true
+  },
+  "dtpa_230253200": {
+    "nome": "DTPA",
+    "lote": "230253200",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "31/12/2026",
+    "em_uso": true
+  },
+  "hepatite_\"a\"_infantil_240314300": {
+    "nome": "HEPATITE \"A\" INFANTIL",
+    "lote": "240314300",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "21/03/2027",
+    "em_uso": true
+  },
+  "hepatite_\"a\"_adulto_ab202401003": {
+    "nome": "HEPATITE \"A\" ADULTO",
+    "lote": "AB202401003",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/04/2027",
+    "em_uso": true
+  },
+  "hepatite_\"b\"_wvx24507": {
+    "nome": "HEPATITE \"B\"",
+    "lote": "WVX24507",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "21/03/2027",
+    "em_uso": true
+  },
+  "hpv_quadrivalente_240349500": {
+    "nome": "HPV QUADRIVALENTE",
+    "lote": "240349500",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "21/03/2027",
+    "em_uso": true
+  },
+  "meningo_\"c\"_amcc06ga": {
+    "nome": "MENINGO \"C\"",
+    "lote": "AMCC06GA",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/03/2027",
+    "em_uso": true
+  },
+  "meningo_acwy_l249vml030nb": {
+    "nome": "MENINGO ACWY",
+    "lote": "L249VML030NB",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/08/2026",
+    "em_uso": true
+  },
+  "pentavalente_2854x020f": {
+    "nome": "PENTAVALENTE",
+    "lote": "2854X020F",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/12/2026",
+    "em_uso": true
+  },
+  "pneumo_10_236vp0009nc": {
+    "nome": "PNEUMO 10",
+    "lote": "236VP0009NC",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/05/2026",
+    "em_uso": true
+  },
+  "pneumo_13_hp7498": {
+    "nome": "PNEUMO 13",
+    "lote": "HP7498",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/06/2026",
+    "em_uso": true
+  },
+  "pneumo_23_z0003228": {
+    "nome": "PNEUMO 23",
+    "lote": "Z0003228",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "24/09/2026",
+    "em_uso": true
+  },
+  "rota_-_virus_249vrto15na": {
+    "nome": "ROTA - VIRUS",
+    "lote": "249VRTO15NA",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/08/2026",
+    "em_uso": true
+  },
+  "scr_0133n157b": {
+    "nome": "SCR",
+    "lote": "0133N157B",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/11/2026",
+    "em_uso": true
+  },
+  "tetra-viral_l257vvv001n": {
+    "nome": "TETRA-VIRAL",
+    "lote": "L257VVV001N",
+    "quantidade": 0,
+    "minimo": 0,
+    "validade": "01/12/2026",
+    "em_uso": true
+  },
+  "varicela_a70cd932a": {
+    "nome": "VARICELA",
+    "lote": "A70CD932A",
+    "quantidade": 0,
+    "minimo": 30,
+    "validade": "16/04/2027",
+    "em_uso": true
+  },
+  "vip_(polio_injetavel)_x3e40": {
+    "nome": "VIP (POLIO INJETAVEL)",
+    "lote": "X3E40",
+    "quantidade": 0,
+    "minimo": 30,
+    "validade": "01/05/2026",
+    "em_uso": true
+  },
+  "dupla_adulto_2335l006b": {
+    "nome": "DUPLA ADULTO",
+    "lote": "2335L006B",
+    "quantidade": 0,
+    "minimo": 30,
+    "validade": "16/04/2027",
+    "em_uso": true
+  }
+}
