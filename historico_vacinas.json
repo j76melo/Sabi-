@@ -4,7 +4,7 @@
     "acao": "ATIVAR LOTE",
     "vacina": "COVID-19",
     "lote": "B456",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado para uso"
   },
   {
@@ -12,7 +12,7 @@
     "acao": "ATIVAR LOTE",
     "vacina": "COVID-19",
     "lote": "B456",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado para uso"
   },
   {
@@ -20,7 +20,7 @@
     "acao": "ALTERAÇÃO LOTE",
     "vacina": "HEPATITE B",
     "lote": "TESTE",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado: TESTE"
   },
   {
@@ -28,7 +28,7 @@
     "acao": "ATIVAR LOTE",
     "vacina": "Hepatite B",
     "lote": "C789",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado para uso"
   },
   {
@@ -36,7 +36,7 @@
     "acao": "ALTERAÇÃO LOTE",
     "vacina": "HEPATITE B",
     "lote": "C789",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado: C789"
   },
   {
@@ -44,7 +44,7 @@
     "acao": "ALTERAÇÃO LOTE",
     "vacina": "HEPATITE B",
     "lote": "TESTE",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado: TESTE"
   },
   {
@@ -52,7 +52,7 @@
     "acao": "REMOVER LOTE",
     "vacina": "HEPATITE B",
     "lote": "TESTE",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote removido"
   },
   {
@@ -468,7 +468,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "HEPATITE \"A\" ADULTO",
     "lote": "AB202401003",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/04/2027"
   },
   {
@@ -476,7 +476,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "HEPATITE \"A\" ADULTO",
     "lote": "AB202401003",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/04/2027"
   },
   {
@@ -484,7 +484,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "HEPATITE \"B\"",
     "lote": "WVX24507",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 21/03/2027"
   },
   {
@@ -492,7 +492,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "HPV QUADRIVALENTE",
     "lote": "240349500",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 21/03/2027"
   },
   {
@@ -500,7 +500,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "INFLUENZA",
     "lote": "260127400",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 30, Validade: 01/02/2027"
   },
   {
@@ -508,7 +508,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "MENINGO \"C\"",
     "lote": "AMCC06GA",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/03/2026"
   },
   {
@@ -516,7 +516,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "MENINGO \"C\"",
     "lote": "AMCC06GA",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/03/2026"
   },
   {
@@ -524,7 +524,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "MENINGO ACWY",
     "lote": "L249VML030NB",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/08/2026"
   },
   {
@@ -532,7 +532,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "MENINGO ACWY",
     "lote": "L249VML030NB",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/08/2026"
   },
   {
@@ -540,7 +540,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "MENINGO \"C\"",
     "lote": "AMCC06GA",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/03/2027"
   },
   {
@@ -548,7 +548,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "PENTAVALENTE",
     "lote": "2854X020F",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/12/2026"
   },
   {
@@ -564,7 +564,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "PNEUMO 10",
     "lote": "236VP0009NC",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/05/2026"
   },
   {
@@ -572,7 +572,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "PNEUMO 10",
     "lote": "236VP0009NC",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/05/2026"
   },
   {
@@ -580,7 +580,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "PNEUMO 13",
     "lote": "HP7498",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/06/2026"
   },
   {
@@ -588,7 +588,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "PNEUMO 23",
     "lote": "Z0003228",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 24/09/2026"
   },
   {
@@ -596,7 +596,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "ROTA - VIRUS",
     "lote": "249VRTO15NA",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/08/2026"
   },
   {
@@ -604,7 +604,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "SCR",
     "lote": "0133N157B",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/11/2026"
   },
   {
@@ -612,7 +612,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "TETRA-VIRAL",
     "lote": "L257VVV001N",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 0, Validade: 01/12/2026"
   },
   {
@@ -620,7 +620,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "VIP (POLIO INJETAVEL)",
     "lote": "X3E40",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 30, Validade: 01/05/2026"
   },
   {
@@ -628,7 +628,7 @@
     "acao": "ALTERAÇÃO LOTE",
     "vacina": "COVID-19",
     "lote": "NC1908",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado: NC1908"
   },
   {
@@ -636,7 +636,7 @@
     "acao": "ATIVAR LOTE",
     "vacina": "COVID-19",
     "lote": "NC1906",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado para uso"
   },
   {
@@ -660,7 +660,7 @@
     "acao": "REMOVER LOTE",
     "vacina": "COVID-19",
     "lote": "NC1908",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote removido"
   },
   {
@@ -700,7 +700,7 @@
     "acao": "ALTERAÇÃO LOTE",
     "vacina": "DUPLA ADULTO",
     "lote": "2335L006B",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado: 2335L006B"
   },
   {
@@ -708,7 +708,7 @@
     "acao": "ADICIONAR LOTE",
     "vacina": "MENINGO \"C\"",
     "lote": "AMCC06GB",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Validade: 01/03/2027"
   },
   {
@@ -724,7 +724,7 @@
     "acao": "ATIVAR LOTE",
     "vacina": "MENINGO \"C\"",
     "lote": "AMCC06GA",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote ativado para uso"
   },
   {
@@ -732,7 +732,7 @@
     "acao": "REMOVER LOTE",
     "vacina": "MENINGO \"C\"",
     "lote": "AMCC06GB",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Lote removido"
   },
   {
@@ -740,7 +740,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "INFLUENZA",
     "lote": "260127400",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 30, Validade: 01/02/2026"
   },
   {
@@ -748,7 +748,7 @@
     "acao": "ATUALIZAR DADOS",
     "vacina": "INFLUENZA",
     "lote": "260127400",
-    "quantidade": 0,
+    "quantidade": 100,
     "observacao": "Minimo: 30, Validade: 01/02/2027"
   }
 ]
