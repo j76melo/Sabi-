@@ -198,26 +198,18 @@ elif menu == "📊 ESTOQUE":
                     else:
                         st.error("Estoque insuficiente!")
         with c3:
-            # Botão REMOVER (agora com opção forçada)
+                # 🔥 BOTÃO REMOVER FORÇADO - SEM CHECKBOX 🔥
             if st.button("🗑️ REMOVER", use_container_width=True):
-                if vsel.get("em_uso"):
-                    # Está em uso, pede confirmação extra
-                    confirmar = st.checkbox("⚠️ Esta vacina está EM USO! Marque para confirmar a remoção mesmo assim.")
-                    if confirmar:
-                        registrar_log("REMOVER LOTE (FORÇADO)", vsel["nome"], vsel["lote"], 0, "Removido mesmo em uso")
-                        del dados[vid]
-                        salvar_dados(dados)
-                        st.success(f"✅ Lote '{vsel['lote']}' removido (estava em uso)!")
-                        st.rerun()
-                    else:
-                        st.warning("Marque o checkbox para confirmar a remoção de um lote em uso.")
-                else:
-                    # Não está em uso, remove direto
-                    registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, "Lote removido")
-                    del dados[vid]
-                    salvar_dados(dados)
-                    st.success(f"✅ Lote '{vsel['lote']}' removido!")
-                    st.rerun()
+                # Avisa se estiver em uso
+                if vacina_selecionada.get("em_uso", False):
+                    st.warning(f"⚠️ '{vacina_selecionada['nome']}' está EM USO! Removendo mesmo assim...")
+                
+                registrar_log("REMOVER LOTE", vacina_selecionada["nome"], vacina_selecionada["lote"], 0, 
+                            "Removido" + (" (estava em uso)" if vacina_selecionada.get("em_uso") else ""))
+                del dados[id_selecionado]
+                salvar_dados(dados)
+                st.success(f"✅ Lote '{vacina_selecionada['lote']}' removido!")
+                st.rerun()
         
         st.markdown("---")
         st.subheader("➕ Novo Lote")
