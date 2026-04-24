@@ -197,20 +197,20 @@ elif menu == "📊 ESTOQUE":
                         st.rerun()
                     else:
                         st.error("Estoque insuficiente!")
-        with c3:
-                # 🔥 BOTÃO REMOVER FORÇADO - SEM CHECKBOX 🔥
-            if st.button("🗑️ REMOVER", use_container_width=True):
-                # Avisa se estiver em uso
-                if vacina_selecionada.get("em_uso", False):
-                    st.warning(f"⚠️ '{vacina_selecionada['nome']}' está EM USO! Removendo mesmo assim...")
-                
-                registrar_log("REMOVER LOTE", vacina_selecionada["nome"], vacina_selecionada["lote"], 0, 
-                            "Removido" + (" (estava em uso)" if vacina_selecionada.get("em_uso") else ""))
-                del dados[id_selecionado]
-                salvar_dados(dados)
-                st.success(f"✅ Lote '{vacina_selecionada['lote']}' removido!")
-                st.rerun()
-        
+                with c3:
+            # BOTÃO REMOVER FORÇADO - SEM CHECKBOX
+                if st.button("🗑️ REMOVER", use_container_width=True):
+                    # Usa vsel e vid que já existem no código
+                    if vsel.get("em_uso", False):
+                        st.warning(f"⚠️ '{vsel['nome']}' está EM USO! Removendo mesmo assim...")
+                    
+                    registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, 
+                                "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
+                    del dados[vid]
+                    salvar_dados(dados)
+                    st.success(f"✅ Lote '{vsel['lote']}' removido!")
+                    st.rerun()
+            
         st.markdown("---")
         st.subheader("➕ Novo Lote")
         with st.form("novo"):
