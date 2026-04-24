@@ -198,12 +198,25 @@ elif menu == "📊 ESTOQUE":
                     else:
                         st.error("Estoque insuficiente!")
         with c3:
-            if not vsel.get("em_uso"):
-                if st.button("🗑️ REMOVER"):
-                    registrar_log("REMOVER", vsel["nome"], vsel["lote"], 0, "")
+            # Botão REMOVER (agora com opção forçada)
+            if st.button("🗑️ REMOVER", use_container_width=True):
+                if vsel.get("em_uso"):
+                    # Está em uso, pede confirmação extra
+                    confirmar = st.checkbox("⚠️ Esta vacina está EM USO! Marque para confirmar a remoção mesmo assim.")
+                    if confirmar:
+                        registrar_log("REMOVER LOTE (FORÇADO)", vsel["nome"], vsel["lote"], 0, "Removido mesmo em uso")
+                        del dados[vid]
+                        salvar_dados(dados)
+                        st.success(f"✅ Lote '{vsel['lote']}' removido (estava em uso)!")
+                        st.rerun()
+                    else:
+                        st.warning("Marque o checkbox para confirmar a remoção de um lote em uso.")
+                else:
+                    # Não está em uso, remove direto
+                    registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, "Lote removido")
                     del dados[vid]
                     salvar_dados(dados)
-                    st.success("✅ Removido!")
+                    st.success(f"✅ Lote '{vsel['lote']}' removido!")
                     st.rerun()
         
         st.markdown("---")
