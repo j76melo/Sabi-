@@ -100,11 +100,7 @@ if "dados" not in st.session_state:
     d = carregar_dados()
     if not d:
         hoje = datetime.now()
-        d = {
-            "c1": {"nome": "COVID-19", "lote": "A123", "fabricante": "Pfizer", "fabricacao": (hoje - timedelta(days=30)).strftime("%d/%m/%Y"), "validade": (hoje + timedelta(days=180)).strftime("%d/%m/%Y"), "recebimento": hoje.strftime("%d/%m/%Y"), "quantidade": 150, "minimo": 50, "em_uso": True},
-            "c2": {"nome": "Influenza", "lote": "B456", "fabricante": "Butantan", "fabricacao": (hoje - timedelta(days=60)).strftime("%d/%m/%Y"), "validade": (hoje + timedelta(days=120)).strftime("%d/%m/%Y"), "recebimento": hoje.strftime("%d/%m/%Y"), "quantidade": 200, "minimo": 80, "em_uso": True},
-            "c3": {"nome": "Hepatite B", "lote": "C789", "fabricante": "Fiocruz", "fabricacao": (hoje - timedelta(days=90)).strftime("%d/%m/%Y"), "validade": (hoje + timedelta(days=365)).strftime("%d/%m/%Y"), "recebimento": hoje.strftime("%d/%m/%Y"), "quantidade": 100, "minimo": 30, "em_uso": True},
-        }
+        d = {}
     st.session_state.dados = d
     st.session_state.eventos = carregar_eventos()
 
