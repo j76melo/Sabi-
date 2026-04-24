@@ -142,7 +142,9 @@ if menu == "💉 VACINAS EM USO":
     st.subheader("💉 Vacinas em Uso")
     em_uso = {k:v for k,v in dados.items() if v.get("em_uso")}
     if em_uso:
-        df = [{"Vacina": v["nome"], "Lote": v["lote"], "Status": verificar_validade(v.get("validade",""))[0]} for v in em_uso.values()]
+        # Ordena as vacinas pelo nome antes de mostrar
+        em_uso_ordenado = sorted(em_uso.values(), key=lambda x: x["nome"])
+        df = [{"Vacina": v["nome"], "Lote": v["lote"], "Status": verificar_validade(v.get("validade",""))[0]} for v in em_uso_ordenado]
         st.dataframe(pd.DataFrame(df), use_container_width=True, hide_index=True)
         
         if st.button("🖨️ GERAR RELATÓRIO", use_container_width=True):
