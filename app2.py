@@ -2,7 +2,11 @@ import streamlit as st
 import json
 import os
 import pandas as pd
+import time
 from datetime import datetime, timedelta
+
+os.environ['TZ'] = 'America/Sao_Paulo'
+time.tzset()
 
 # Configuração
 st.set_page_config(page_title="Sistema de Vacinas SUS", page_icon="💉", layout="wide", initial_sidebar_state="collapsed")
@@ -64,8 +68,29 @@ def salvar_logs(logs):
 
 def registrar_log(acao, vacina, lote, quantidade, obs=""):
     logs = carregar_logs()
-    logs.append({"data": datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "acao": acao, "vacina": vacina, "lote": lote, "quantidade": quantidade, "observacao": obs})
+    
+    # Horário de Brasília (UTC-3)
+    agora = datetime.now()
+    logs.append({
+        "data": agora.strftime("%d/%m/%Y %H:%M:%S"), 
+        "acao": acao, 
+        "vacina": vacina, 
+        "lote": lote, 
+        "quantidade": quantidade, 
+        "observacao": obs
+    })
     salvar_logs(logs)
+
+def registrar_evento_auto(evento, observacao=""):
+    eventos = carregar_eventos()
+    agora = datetime.now()
+    eventos.append({
+        "data": agora.strftime("%d/%m/%Y %H:%M"),
+        "evento": evento,
+        "quem": "Sistema (automático)",
+        "obs": observacao
+    })
+    salvar_eventos(eventos)
 
 def verificar_validade(data_str):
     try:
