@@ -199,17 +199,17 @@ elif menu == "📊 ESTOQUE":
                         st.error("Estoque insuficiente!")
                 with c3:
             # BOTÃO REMOVER FORÇADO - SEM CHECKBOX
-                if st.button("🗑️ REMOVER", use_container_width=True):
-                    # Usa vsel e vid que já existem no código
-                    if vsel.get("em_uso", False):
-                        st.warning(f"⚠️ '{vsel['nome']}' está EM USO! Removendo mesmo assim...")
-                    
-                    registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, 
-                                "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
-                    del dados[vid]
-                    salvar_dados(dados)
-                    st.success(f"✅ Lote '{vsel['lote']}' removido!")
-                    st.rerun()
+                            if st.button("🗑️ REMOVER", use_container_width=True):
+                                # Usa vsel e vid que já existem no código
+                                if vsel.get("em_uso", False):
+                                    st.warning(f"⚠️ '{vsel['nome']}' está EM USO! Removendo mesmo assim...")
+                                
+                                registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, 
+                                            "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
+                                del dados[vid]
+                                salvar_dados(dados)
+                                st.success(f"✅ Lote '{vsel['lote']}' removido!")
+                                st.rerun()
             
         st.markdown("---")
         st.subheader("➕ Novo Lote")
