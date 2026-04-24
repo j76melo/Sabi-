@@ -80,7 +80,7 @@ def verificar_validade(data_str):
         return "❌ Data inválida", "#D32F2F"
 
 def gerar_id(nome, lote):
-    return f"{nome}_{lote}".replace(" ", "_").lower()
+    return f"{nome}_{lote}".replace(" ", "_").upper()  # upper() força maiúsculo
 
 def gerar_html_tabela(dados, titulo):
     html = f"<html><head><meta charset='UTF-8'><title>{titulo}</title><style>"

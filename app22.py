@@ -322,7 +322,7 @@ elif menu == "📊 CONTROLE DE ESTOQUE":
         with st.form("novo_lote"):
             col_a, col_b = st.columns(2)
             with col_a:
-                novo_nome = st.text_input("Nome da Vacina")
+                novo_nome = st.text_input("Nome da Vacina").strip().upper()  # força maiúsculo
                 novo_lote = st.text_input("Lote")
             with col_b:
                 nova_validade = st.text_input("Validade (DD/MM/AAAA)", value=(datetime.now() + timedelta(days=365)).strftime("%d/%m/%Y"))
