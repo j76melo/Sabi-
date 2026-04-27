@@ -130,6 +130,7 @@ if "dados" not in st.session_state:
     st.session_state.eventos = carregar_eventos()
 
 dados = st.session_state.dados
+
 eventos = st.session_state.eventos
 
 # ========== MENU ==========
