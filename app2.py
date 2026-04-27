@@ -309,8 +309,6 @@ elif menu == "📜 LOGS":
 # ========== TELA 5 ==========
 else:
     st.subheader("ℹ️ Sobre")
-    else:
-    st.subheader("ℹ️ Sobre")
     st.markdown(f"""
     **Sistema de Estoque - Vacinas SUS**
     
@@ -319,22 +317,8 @@ else:
     - Tela 3: Eventos
     - Tela 4: Logs
     
-    **Desenvolvido por:** Jackson Melo  
-    **Data:** {datetime.now().strftime("%d/%m/%Y")}
-    
-    ---
-    
-    *else:
-    st.subheader("ℹ️ Sobre")
-    st.markdown(f"""
-    **Sistema de Estoque - Vacinas SUS**
-    
-    - Tela 1: Vacinas em uso
-    - Tela 2: Estoque completo
-    - Tela 3: Eventos
-    - Tela 4: Logs
-    
-    **Desenvolvido por:** Jairo Marcos Melo, Técnico em enfermagem e desenvolvedor auto-didata  
+    **Desenvolvido por:** Jairo Marcos Melo  
+    **Técnico em Enfermagem | Desenvolvedor Autodidata**  
     **Data:** {datetime.now().strftime("%d/%m/%Y")}
     
     ---
@@ -343,10 +327,5 @@ else:
     
     ---
     
-    Versão Supabase - Dados persistentes na nuvem ☁️
-    """)*
-    
-    ---
-    
-    Versão Supabase - Dados persistentes na nuvem ☁️
+    **Versão Supabase - Dados persistentes na nuvem**
     """)
