@@ -309,4 +309,44 @@ elif menu == "📜 LOGS":
 # ========== TELA 5 ==========
 else:
     st.subheader("ℹ️ Sobre")
-    st.markdown("**Sistema de Estoque - Vacinas SUS**\n\n- Tela 1: Vacinas em uso\n- Tela 2: Estoque completo\n- Tela 3: Eventos\n- Tela 4: Logs\n\nVersão Supabase - Dados persistentes na nuvem ☁️")
+    else:
+    st.subheader("ℹ️ Sobre")
+    st.markdown(f"""
+    **Sistema de Estoque - Vacinas SUS**
+    
+    - Tela 1: Vacinas em uso
+    - Tela 2: Estoque completo
+    - Tela 3: Eventos
+    - Tela 4: Logs
+    
+    **Desenvolvido por:** Jackson Melo  
+    **Data:** {datetime.now().strftime("%d/%m/%Y")}
+    
+    ---
+    
+    *else:
+    st.subheader("ℹ️ Sobre")
+    st.markdown(f"""
+    **Sistema de Estoque - Vacinas SUS**
+    
+    - Tela 1: Vacinas em uso
+    - Tela 2: Estoque completo
+    - Tela 3: Eventos
+    - Tela 4: Logs
+    
+    **Desenvolvido por:** Jairo Marcos Melo, Técnico em enfermagem e desenvolvedor auto-didata  
+    **Data:** {datetime.now().strftime("%d/%m/%Y")}
+    
+    ---
+    
+    *"A prevenção é a vacina contra o amanhã incerto."*
+    
+    ---
+    
+    Versão Supabase - Dados persistentes na nuvem ☁️
+    """)*
+    
+    ---
+    
+    Versão Supabase - Dados persistentes na nuvem ☁️
+    """)
