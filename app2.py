@@ -278,8 +278,8 @@ elif menu == "📊 ESTOQUE":
                 drec = st.text_input("Recebimento", value=datetime.now().strftime("%d/%m/%Y"))
                 qtde = st.number_input("Quantidade", min_value=0, value=0)
                 min_val = st.number_input("Mínimo", min_value=0, value=30)
+            
             if st.form_submit_button("ADICIONAR"):
-                
                 if nome and lote:
                     nid = gerar_id(nome, lote)
                     novo_lote = {
@@ -290,7 +290,7 @@ elif menu == "📊 ESTOQUE":
                         "validade": dval,
                         "recebimento": drec,
                         "quantidade": qtde,
-                        "minimo": min,
+                        "minimo": min_val,  # ← AQUI ESTAVA O ERRO
                         "em_uso": False
                     }
                     
@@ -298,7 +298,7 @@ elif menu == "📊 ESTOQUE":
                     try:
                         supabase.table("vacinas").insert(novo_lote).execute()
                         st.success(f"✅ Lote {lote} adicionado!")
-                        st.session_state.dados = carregar_dados()  # Recarrega os dados
+                        st.session_state.dados = carregar_dados()
                         st.rerun()
                     except Exception as e:
                         st.error(f"Erro ao salvar: {e}")
