@@ -45,8 +45,10 @@ def salvar_dados(dados):
         # Insere todos os dados atuais
         for item in dados.values():
             supabase.table("vacinas").insert(item).execute()
+        return True
     except Exception as e:
-        st.error(f"Erro ao salvar dados: {e}")
+        st.error(f"ERRO DETALHADO: {e}")
+        return False
 
 def carregar_eventos():
     """Carrega os eventos do Supabase"""
