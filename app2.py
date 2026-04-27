@@ -38,21 +38,24 @@ def carregar_dados():
         return {}
 
 def salvar_dados(dados):
-    """Salva os dados no Supabase (insere ou atualiza cada lote individualmente)"""
-    for item in dados.values():
+    """Salva os dados no Supabase - VERSÃO DEBUG"""
+    for key, item in dados.items():
         try:
-            # Verifica se o lote já existe
-            existing = supabase.table("vacinas").select("id").eq("nome", item["nome"]).eq("lote", item["lote"]).execute()
+            # Limpa o campo 'id' se existir, pois o UPDATE não gosta dele
+            item_para_salvar = item.copy()
+            item_para_salvar.pop('id', None) 
+
+            # Tenta fazer o UPDATE
+            response = supabase.table("vacinas").update(item_para_salvar).eq("nome", item["nome"]).eq("lote", item["lote"]).execute()
             
-            if existing.data:
-                # Atualiza
-                supabase.table("vacinas").update(item).eq("id", existing.data[0]["id"]).execute()
-            else:
-                # Insere
-                supabase.table("vacinas").insert(item).execute()
+            # Se não funcionou, tenta o INSERT
+            if not response.data:
+                supabase.table("vacinas").insert(item_para_salvar).execute()
+                
         except Exception as e:
-            st.error(f"Erro ao salvar lote {item['lote']}: {e}")
-            return False
+            # ESSA LINHA É O SEGREDO: Ela vai mostrar o erro na tela e parar tudo
+            st.exception(e) 
+            st.stop() # Para a execução aqui para você ler o erro
     return True
 
 def carregar_eventos():
