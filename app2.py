@@ -38,17 +38,22 @@ def carregar_dados():
         return {}
 
 def salvar_dados(dados):
-    """Salva os dados no Supabase (substitui toda a tabela)"""
-    try:
-        # Limpa a tabela
-        supabase.table("vacinas").delete().neq("id", 0).execute()
-        # Insere todos os dados atuais
-        for item in dados.values():
-            supabase.table("vacinas").insert(item).execute()
-        return True
-    except Exception as e:
-        st.error(f"ERRO DETALHADO: {e}")
-        return False
+    """Salva os dados no Supabase (insere ou atualiza cada lote individualmente)"""
+    for item in dados.values():
+        try:
+            # Verifica se o lote já existe
+            existing = supabase.table("vacinas").select("id").eq("nome", item["nome"]).eq("lote", item["lote"]).execute()
+            
+            if existing.data:
+                # Atualiza
+                supabase.table("vacinas").update(item).eq("id", existing.data[0]["id"]).execute()
+            else:
+                # Insere
+                supabase.table("vacinas").insert(item).execute()
+        except Exception as e:
+            st.error(f"Erro ao salvar lote {item['lote']}: {e}")
+            return False
+    return True
 
 def carregar_eventos():
     """Carrega os eventos do Supabase"""
@@ -274,19 +279,31 @@ elif menu == "📊 ESTOQUE":
                 qtde = st.number_input("Quantidade", min_value=0, value=0)
                 min_val = st.number_input("Mínimo", min_value=0, value=30)
             if st.form_submit_button("ADICIONAR"):
+                
                 if nome and lote:
                     nid = gerar_id(nome, lote)
-                    if nid not in dados:
-                        dados[nid] = {"nome": nome, "lote": lote, "fabricante": fab, "fabricacao": dfab, "validade": dval, "recebimento": drec, "quantidade": qtde, "minimo": min_val, "em_uso": False}
-                        salvar_dados(dados)
-                        registrar_log("CADASTRO", nome, lote, qtde, "")
-                        eventos.append({"data": datetime.now().strftime("%d/%m/%Y %H:%M"), "evento": f"Recebimento lote {lote} - {qtde} und", "quem": "Sistema", "obs": f"Fabricante: {fab}"})
-                        salvar_eventos(eventos)
+                    novo_lote = {
+                        "nome": nome,
+                        "lote": lote,
+                        "fabricante": fab,
+                        "fabricacao": dfab,
+                        "validade": dval,
+                        "recebimento": drec,
+                        "quantidade": qtde,
+                        "minimo": min,
+                        "em_uso": False
+                    }
+                    
+                    # Salva diretamente no Supabase
+                    try:
+                        supabase.table("vacinas").insert(novo_lote).execute()
                         st.success(f"✅ Lote {lote} adicionado!")
+                        st.session_state.dados = carregar_dados()  # Recarrega os dados
                         st.rerun()
-                    else:
-                        st.error("Lote já existe!")
-
+                    except Exception as e:
+                        st.error(f"Erro ao salvar: {e}")
+                else:
+                    st.error("Preencha nome e lote!")
 # ========== TELA 3 ==========
 elif menu == "📋 EVENTOS":
     st.subheader("📋 Eventos")
