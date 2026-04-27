@@ -177,7 +177,7 @@ elif menu == "📊 ESTOQUE":
         df = []
         for v in dados.values():
             s, _ = verificar_validade(v.get("validade",""))
-            df.append({"Nome": v["nome"], "Lote": v["lote"], "Fabricante": v.get("fabricante",""), "Fabricação": v.get("fabricacao",""), "Validade": v.get("validade",""), "Recebimento": v.get("recebimento",""), "Estoque": v.get("quantidade",0), "Mínimo": v.get("minimo",30), "Status": s, "Em Uso": "EM USO" if v.get("em_uso") else "ESTOQUE"})
+            df.append({"Nome": v["nome"], "Lote": v["lote"], "Fabricante": v.get("fabricante",""), "Fabricação": v.get("fabricacao",""), "Validade": v.get("validade",""), "Recebimento": v.get("recebimento",""), "Estoque": v.get("quantidade",0), "Mínimo": v.get("minimo",30), "Status": s, "Situação": "EM USO" if v.get("em_uso") else "ESTOQUE"})
         st.dataframe(pd.DataFrame(df), use_container_width=True, hide_index=True)
         
         if st.button("🖨️ GERAR RELATÓRIO COMPLETO", use_container_width=True):
