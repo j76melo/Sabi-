@@ -182,11 +182,13 @@ elif menu == "📊 ESTOQUE":
         
         if st.button("🖨️ GERAR RELATÓRIO COMPLETO", use_container_width=True):
             if df:
-                html = gerar_html_tabela(df, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
+                df_ordenado = sorted(df, key=lambda x: x["Nome"])
+                html = gerar_html_tabela(df_ordenado, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
                 st.download_button("📥 BAIXAR HTML", html, file_name=f"estoque_{datetime.now().strftime('%Y%m%d')}.html", mime="text/html")
                 st.info("💡 Abra o arquivo e use Ctrl+P para imprimir como PDF")
-        
+                
         st.markdown("---")
+        
         st.subheader("⚙️ Ações")
         opcoes = [f"{v['nome']} - {v['lote']}" for v in dados.values()]
         sel = st.selectbox("Selecione o lote", opcoes)
