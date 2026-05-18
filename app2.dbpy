@@ -202,22 +202,35 @@ if menu == "💉 VACINAS EM USO":
     else:
         st.info("Nenhuma vacina em uso.")
 
-# ========== TELA 2 ==========
+## ========== TELA 2 ==========
 elif menu == "📊 ESTOQUE":
     st.subheader("📊 Estoque")
+    
     if dados:
         df = []
         for v in dados.values():
             s, _ = verificar_validade(v.get("validade",""))
-            df.append({"Nome": v["nome"], "Lote": v["lote"], "Fabricante": v.get("fabricante",""), "Fabricação": v.get("fabricacao",""), "Validade": v.get("validade",""), "Recebimento": v.get("recebimento",""), "Estoque": v.get("quantidade",0), "Mínimo": v.get("minimo",30), "Status": s, "Em Uso": "⭐" if v.get("em_uso") else "⚪"})
+            df.append({
+                "Nome": v["nome"], 
+                "Lote": v["lote"], 
+                "Fabricante": v.get("fabricante",""), 
+                "Fabricação": v.get("fabricacao",""), 
+                "Validade": v.get("validade",""), 
+                "Recebimento": v.get("recebimento",""), 
+                "Estoque": v.get("quantidade",0), 
+                "Mínimo": v.get("minimo",30), 
+                "Status": s, 
+                "Em Uso": "⭐ EM USO" if v.get("em_uso") else "⚪"
+            })
         st.dataframe(pd.DataFrame(df), use_container_width=True, hide_index=True)
         
+        # Botão de relatório com indentação correta
         if st.button("🖨️ GERAR RELATÓRIO COMPLETO", use_container_width=True):
-    if df:
-        df_ordenado = sorted(df, key=lambda x: x["Nome"])
-        html = gerar_html_tabela(df_ordenado, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
-        st.download_button("📥 BAIXAR HTML", html, file_name=f"estoque_{datetime.now().strftime('%Y%m%d')}.html", mime="text/html")
-        st.info("💡 Abra o arquivo e use Ctrl+P para imprimir como PDF")
+            if df:
+                df_ordenado = sorted(df, key=lambda x: x["Nome"])
+                html = gerar_html_tabela(df_ordenado, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
+                st.download_button("📥 BAIXAR HTML", html, file_name=f"estoque_{datetime.now().strftime('%Y%m%d')}.html", mime="text/html")
+                st.info("💡 Abra o arquivo e use Ctrl+P para imprimir como PDF")
         
         st.markdown("---")
         st.subheader("⚙️ Ações")
@@ -237,23 +250,26 @@ elif menu == "📊 ESTOQUE":
             with c1:
                 if st.button("⭐ ATIVAR"):
                     for v in dados.values():
-                        if v["nome"] == vsel["nome"]: v["em_uso"] = False
+                        if v["nome"] == vsel["nome"] and v.get("em_uso"):
+                            v["em_uso"] = False
+                            salvar_lote(v)
                     dados[vid]["em_uso"] = True
-                    salvar_dados(dados)
+                    salvar_lote(dados[vid])
                     registrar_log("ATIVAR", vsel["nome"], vsel["lote"], 0, "")
+                    st.session_state.dados = carregar_dados()
                     st.success("✅ Ativado!")
                     st.rerun()
             with c2:
                 with st.popover("📤 BAIXA"):
-                    q = st.number_input("Quantidade", min_value=1, step=1)
-                    obs = st.text_area("Observação")
-                    if st.button("CONFIRMAR"):
-                        if q <= vsel.get("quantidade",0):
-                            dados[vid]["quantidade"] = vsel.get("quantidade",0) - q
-                            salvar_dados(dados)
+                    q = st.number_input("Quantidade", min_value=1, step=1, key="qtd_saida")
+                    obs = st.text_area("Observação", key="obs_saida")
+                    if st.button("CONFIRMAR", key="btn_baixa"):
+                        if q <= vsel.get("quantidade", 0):
+                            dados[vid]["quantidade"] = vsel.get("quantidade", 0) - q
+                            salvar_lote(dados[vid])
                             registrar_log("BAIXA", vsel["nome"], vsel["lote"], q, obs)
-                            eventos.append({"data": datetime.now().strftime("%d/%m/%Y %H:%M"), "evento": f"Baixa de {q} und - {vsel['lote']}", "quem": "Sistema", "obs": obs})
-                            salvar_eventos(eventos)
+                            registrar_evento_auto(f"Baixa de {q} und - {vsel['lote']}", obs)
+                            st.session_state.dados = carregar_dados()
                             st.success(f"✅ -{q} unidades!")
                             st.rerun()
                         else:
@@ -262,52 +278,50 @@ elif menu == "📊 ESTOQUE":
                 if st.button("🗑️ REMOVER", use_container_width=True):
                     if vsel.get("em_uso", False):
                         st.warning(f"⚠️ '{vsel['nome']}' está EM USO! Removendo mesmo assim...")
+                    remover_lote(vsel["nome"], vsel["lote"])
                     registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
-                    del dados[vid]
-                    salvar_dados(dados)
+                    st.session_state.dados = carregar_dados()
                     st.success(f"✅ Lote '{vsel['lote']}' removido!")
                     st.rerun()
+    
+    st.markdown("---")
+    st.subheader("➕ Novo Lote")
+    with st.form("novo"):
+        c1, c2 = st.columns(2)
+        with c1:
+            nome = st.text_input("Vacina")
+            lote = st.text_input("Lote")
+            fab = st.text_input("Fabricante")
+            dfab = st.text_input("Fabricação", value=datetime.now().strftime("%d/%m/%Y"))
+        with c2:
+            dval = st.text_input("Validade", value=(datetime.now()+timedelta(days=365)).strftime("%d/%m/%Y"))
+            drec = st.text_input("Recebimento", value=datetime.now().strftime("%d/%m/%Y"))
+            qtde = st.number_input("Quantidade", min_value=0, value=0, key="qtde_novo")
+            min_val = st.number_input("Mínimo", min_value=0, value=30, key="min_novo")
         
-        st.markdown("---")
-        st.subheader("➕ Novo Lote")
-        with st.form("novo"):
-            c1, c2 = st.columns(2)
-            with c1:
-                nome = st.text_input("Vacina")
-                lote = st.text_input("Lote")
-                fab = st.text_input("Fabricante")
-                dfab = st.text_input("Fabricação", value=datetime.now().strftime("%d/%m/%Y"))
-            with c2:
-                dval = st.text_input("Validade", value=(datetime.now()+timedelta(days=365)).strftime("%d/%m/%Y"))
-                drec = st.text_input("Recebimento", value=datetime.now().strftime("%d/%m/%Y"))
-                qtde = st.number_input("Quantidade", min_value=0, value=0)
-                min_val = st.number_input("Mínimo", min_value=0, value=30)
-            
-            if st.form_submit_button("ADICIONAR"):
-                if nome and lote:
-                    nid = gerar_id(nome, lote)
-                    novo_lote = {
-                        "nome": nome,
-                        "lote": lote,
-                        "fabricante": fab,
-                        "fabricacao": dfab,
-                        "validade": dval,
-                        "recebimento": drec,
-                        "quantidade": qtde,
-                        "minimo": min_val,  # ← AQUI ESTAVA O ERRO
-                        "em_uso": False
-                    }
-                    
-                    # Salva diretamente no Supabase
-                    try:
-                        supabase.table("vacinas").insert(novo_lote).execute()
-                        st.success(f"✅ Lote {lote} adicionado!")
-                        st.session_state.dados = carregar_dados()
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Erro ao salvar: {e}")
+        if st.form_submit_button("ADICIONAR"):
+            if nome and lote:
+                novo_lote = {
+                    "nome": nome,
+                    "lote": lote,
+                    "fabricante": fab,
+                    "fabricacao": dfab,
+                    "validade": dval,
+                    "recebimento": drec,
+                    "quantidade": qtde,
+                    "minimo": min_val,
+                    "em_uso": False
+                }
+                if salvar_lote(novo_lote):
+                    registrar_log("CADASTRO", nome, lote, qtde, "")
+                    registrar_evento_auto(f"Recebimento lote {lote} - {qtde} und", f"Fabricante: {fab}")
+                    st.session_state.dados = carregar_dados()
+                    st.success(f"✅ Lote {lote} adicionado!")
+                    st.rerun()
                 else:
-                    st.error("Preencha nome e lote!")
+                    st.error("Erro ao salvar!")
+            else:
+                st.error("Preencha nome e lote!")
 # ========== TELA 3 ==========
 elif menu == "📋 EVENTOS":
     st.subheader("📋 Eventos")
