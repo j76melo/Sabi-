@@ -202,38 +202,39 @@ if menu == "💉 VACINAS EM USO":
     else:
         st.info("Nenhuma vacina em uso.")
 
-## ========== TELA 2 ==========
+# ========== TELA 2 ==========
 elif menu == "📊 ESTOQUE":
     st.subheader("📊 Estoque")
     
     if dados:
-    # Ordena os dados antes de montar o df
-    dados_ordenados = sorted(dados.values(), key=lambda x: x["nome"])
-    
-    df = []
-    for v in dados_ordenados:
-        s, _ = verificar_validade(v.get("validade",""))
-        df.append({
-            "Nome": v["nome"], 
-            "Lote": v["lote"], 
-            "Fabricante": v.get("fabricante",""), 
-            "Fabricação": v.get("fabricacao",""), 
-            "Validade": v.get("validade",""), 
-            "Recebimento": v.get("recebimento",""), 
-            "Estoque": v.get("quantidade",0), 
-            "Mínimo": v.get("minimo",30), 
-            "Status": s, 
-            "Em Uso": "⭐ EM USO" if v.get("em_uso") else "⚪"
-        })
-    st.dataframe(pd.DataFrame(df), use_container_width=True, hide_index=True)
-    
-    # Relatório já ordenado (redundância, mas seguro)
-    if st.button("🖨️ GERAR RELATÓRIO COMPLETO", use_container_width=True):
-        if df:
-            df_ordenado = sorted(df, key=lambda x: x["Nome"])
-            html = gerar_html_tabela(df_ordenado, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
-            st.download_button("📥 BAIXAR HTML", html, file_name=f"estoque_{datetime.now().strftime('%Y%m%d')}.html", mime="text/html")
-            st.info("💡 Abra o arquivo e use Ctrl+P para imprimir como PDF")
+        # Ordena os dados antes de montar o df
+        dados_ordenados = sorted(dados.values(), key=lambda x: x["nome"])
+        
+        df = []
+        for v in dados_ordenados:
+            s, _ = verificar_validade(v.get("validade",""))
+            df.append({
+                "Nome": v["nome"], 
+                "Lote": v["lote"], 
+                "Fabricante": v.get("fabricante",""), 
+                "Fabricação": v.get("fabricacao",""), 
+                "Validade": v.get("validade",""), 
+                "Recebimento": v.get("recebimento",""), 
+                "Estoque": v.get("quantidade",0), 
+                "Mínimo": v.get("minimo",30), 
+                "Status": s, 
+                "Em Uso": "⭐ EM USO" if v.get("em_uso") else "⚪"
+            })
+        st.dataframe(pd.DataFrame(df), use_container_width=True, hide_index=True)
+        
+        # RELATÓRIO COM ORDEM ALFABÉTICA GARANTIDA
+        if st.button("🖨️ GERAR RELATÓRIO COMPLETO", use_container_width=True):
+            if df:
+                df_ordenado = sorted(df, key=lambda x: x["Nome"])
+                html = gerar_html_tabela(df_ordenado, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
+                st.download_button("📥 BAIXAR HTML", html, file_name=f"estoque_{datetime.now().strftime('%Y%m%d')}.html", mime="text/html")
+                st.info("💡 Abra o arquivo e use Ctrl+P para imprimir como PDF")
+        
         st.markdown("---")
         st.subheader("⚙️ Ações")
         opcoes = [f"{v['nome']} - {v['lote']}" for v in dados.values()]
@@ -251,12 +252,21 @@ elif menu == "📊 ESTOQUE":
             c1, c2, c3 = st.columns(3)
             with c1:
                 if st.button("⭐ ATIVAR"):
+                    # Desativa todos da mesma vacina
                     for v in dados.values():
                         if v["nome"] == vsel["nome"] and v.get("em_uso"):
                             v["em_uso"] = False
-                            salvar_lote(v)
+                            # Salva diretamente no Supabase
+                            try:
+                                supabase.table("vacinas").update({"em_uso": False}).eq("id", v["id"]).execute()
+                            except:
+                                pass
+                    # Ativa o selecionado
                     dados[vid]["em_uso"] = True
-                    salvar_lote(dados[vid])
+                    try:
+                        supabase.table("vacinas").update({"em_uso": True}).eq("id", dados[vid]["id"]).execute()
+                    except:
+                        pass
                     registrar_log("ATIVAR", vsel["nome"], vsel["lote"], 0, "")
                     st.session_state.dados = carregar_dados()
                     st.success("✅ Ativado!")
@@ -267,8 +277,12 @@ elif menu == "📊 ESTOQUE":
                     obs = st.text_area("Observação", key="obs_saida")
                     if st.button("CONFIRMAR", key="btn_baixa"):
                         if q <= vsel.get("quantidade", 0):
-                            dados[vid]["quantidade"] = vsel.get("quantidade", 0) - q
-                            salvar_lote(dados[vid])
+                            nova_qtde = vsel.get("quantidade", 0) - q
+                            dados[vid]["quantidade"] = nova_qtde
+                            try:
+                                supabase.table("vacinas").update({"quantidade": nova_qtde}).eq("id", dados[vid]["id"]).execute()
+                            except:
+                                pass
                             registrar_log("BAIXA", vsel["nome"], vsel["lote"], q, obs)
                             registrar_evento_auto(f"Baixa de {q} und - {vsel['lote']}", obs)
                             st.session_state.dados = carregar_dados()
@@ -280,12 +294,16 @@ elif menu == "📊 ESTOQUE":
                 if st.button("🗑️ REMOVER", use_container_width=True):
                     if vsel.get("em_uso", False):
                         st.warning(f"⚠️ '{vsel['nome']}' está EM USO! Removendo mesmo assim...")
-                    remover_lote(vsel["nome"], vsel["lote"])
-                    registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
-                    st.session_state.dados = carregar_dados()
-                    st.success(f"✅ Lote '{vsel['lote']}' removido!")
-                    st.rerun()
+                    try:
+                        supabase.table("vacinas").delete().eq("id", dados[vid]["id"]).execute()
+                        registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
+                        st.session_state.dados = carregar_dados()
+                        st.success(f"✅ Lote '{vsel['lote']}' removido!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Erro ao remover: {e}")
     
+    # Formulário de novo lote (sempre visível)
     st.markdown("---")
     st.subheader("➕ Novo Lote")
     with st.form("novo"):
@@ -314,14 +332,15 @@ elif menu == "📊 ESTOQUE":
                     "minimo": min_val,
                     "em_uso": False
                 }
-                if salvar_lote(novo_lote):
+                try:
+                    supabase.table("vacinas").insert(novo_lote).execute()
                     registrar_log("CADASTRO", nome, lote, qtde, "")
                     registrar_evento_auto(f"Recebimento lote {lote} - {qtde} und", f"Fabricante: {fab}")
                     st.session_state.dados = carregar_dados()
                     st.success(f"✅ Lote {lote} adicionado!")
                     st.rerun()
-                else:
-                    st.error("Erro ao salvar!")
+                except Exception as e:
+                    st.error(f"Erro ao salvar: {e}")
             else:
                 st.error("Preencha nome e lote!")
 # ========== TELA 3 ==========
