@@ -170,105 +170,78 @@ if menu == "💉 VACINAS EM USO":
         st.info("Nenhuma vacina em uso.")
 
 # ========== TELA 2 ==========
-# ========== TELA 2 ==========
 elif menu == "📊 ESTOQUE":
     st.subheader("📊 Estoque")
     
     if dados:
-        # Converte dados para DataFrame (já ordenado)
-        dados_ordenados = sorted(dados.values(), key=lambda x: x["nome"])
         df = []
-        for v in dados_ordenados:
+        for v in dados.values():
             s, _ = verificar_validade(v.get("validade",""))
-            df.append({
-                "Nome": v["nome"], 
-                "Lote": v["lote"], 
-                "Fabricante": v.get("fabricante",""), 
-                "Fabricação": v.get("fabricacao",""), 
-                "Validade": v.get("validade",""), 
-                "Recebimento": v.get("recebimento",""), 
-                "Estoque": v.get("quantidade",0), 
-                "Mínimo": v.get("minimo",30), 
-                "Status": s, 
-                "Situação": "⭐ EM USO" if v.get("em_uso") else "⚪"
-            })
+            df.append({"Nome": v["nome"], "Lote": v["lote"], "Fabricante": v.get("fabricante",""), "Fabricação": v.get("fabricacao",""), "Validade": v.get("validade",""), "Recebimento": v.get("recebimento",""), "Estoque": v.get("quantidade",0), "Mínimo": v.get("minimo",30), "Status": s, "Situação": "EM USO" if v.get("em_uso") else "ESTOQUE"})
+        st.dataframe(pd.DataFrame(df), use_container_width=True, hide_index=True)
         
-        # Tabela clicável
-        evento = st.dataframe(
-            pd.DataFrame(df),
-            use_container_width=True,
-            hide_index=True,
-            on_select="rerun",
-            selection_mode="single-row"
-        )
-        
-        # Captura a linha selecionada
-        if evento.selection.rows:
-            linha = evento.selection.rows[0]
-            lote_selecionado = df[linha]["Lote"]
-            # Busca o lote completo no dicionário original
-            for vid, v in dados.items():
-                if v["lote"] == lote_selecionado:
-                    vsel = v
-                    vid_selecionado = vid
-                    break
-            
-            # POP-UP DE EDIÇÃO COMPLETA
-            with st.popover(f"✏️ Editar {vsel['nome']} - Lote {vsel['lote']}"):
-                st.markdown(f"**Vacina:** {vsel['nome']}")
-                with st.form("editar_lote"):
-                    novo_lote = st.text_input("Lote", value=vsel["lote"])
-                    novo_fabricante = st.text_input("Fabricante", value=vsel.get("fabricante", ""))
-                    nova_fabricacao = st.text_input("Fabricação", value=vsel.get("fabricacao", ""))
-                    nova_validade = st.text_input("Validade", value=vsel.get("validade", ""))
-                    novo_recebimento = st.text_input("Recebimento", value=vsel.get("recebimento", ""))
-                    nova_qtde = st.number_input("Quantidade", value=vsel.get("quantidade", 0), step=1)
-                    novo_minimo = st.number_input("Mínimo", value=vsel.get("minimo", 30), step=1)
-                    em_uso = st.checkbox("⭐ EM USO", value=vsel.get("em_uso", False))
-                    
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        if st.form_submit_button("💾 SALVAR ALTERAÇÕES"):
-                            # Atualiza o dicionário em memória
-                            vsel["lote"] = novo_lote
-                            vsel["fabricante"] = novo_fabricante
-                            vsel["fabricacao"] = nova_fabricacao
-                            vsel["validade"] = nova_validade
-                            vsel["recebimento"] = novo_recebimento
-                            vsel["quantidade"] = nova_qtde
-                            vsel["minimo"] = novo_minimo
-                            vsel["em_uso"] = em_uso
-                            
-                            # Salva no Supabase
-                            try:
-                                supabase.table("vacinas").update(vsel).eq("id", vsel["id"]).execute()
-                                registrar_log("EDIÇÃO", vsel["nome"], vsel["lote"], nova_qtde, f"Editado via pop-up")
-                                st.session_state.dados = carregar_dados()
-                                st.success("✅ Alterações salvas com sucesso!")
-                                st.rerun()
-                            except Exception as e:
-                                st.error(f"Erro ao salvar: {e}")
-                    with col2:
-                        if st.form_submit_button("🗑️ REMOVER LOTE"):
-                            if st.checkbox("Confirmar remoção definitiva?"):
-                                try:
-                                    supabase.table("vacinas").delete().eq("id", vsel["id"]).execute()
-                                    registrar_log("REMOÇÃO", vsel["nome"], vsel["lote"], 0, "Removido via pop-up")
-                                    st.session_state.dados = carregar_dados()
-                                    st.success("✅ Lote removido com sucesso!")
-                                    st.rerun()
-                                except Exception as e:
-                                    st.error(f"Erro ao remover: {e}")
-        
-        # RELATÓRIO
         if st.button("🖨️ GERAR RELATÓRIO COMPLETO", use_container_width=True):
             if df:
                 df_ordenado = sorted(df, key=lambda x: x["Nome"])
                 html = gerar_html_tabela(df_ordenado, "DEMONSTRATIVO DE ESTOQUE - SAE LAPA")
                 st.download_button("📥 BAIXAR HTML", html, file_name=f"estoque_{datetime.now().strftime('%Y%m%d')}.html", mime="text/html")
                 st.info("💡 Abra o arquivo e use Ctrl+P para imprimir como PDF")
+                
+        st.markdown("---")
+        
+        st.subheader("⚙️ Ações")
+        opcoes = [f"{v['nome']} - {v['lote']}" for v in dados.values()]
+        sel = st.selectbox("Selecione o lote", opcoes)
+        lote_sel = sel.split(" - ")[1]
+        vid = None
+        vsel = None
+        for idl, v in dados.items():
+            if v["lote"] == lote_sel:
+                vid = idl
+                vsel = v
+                break
+        
+        if vsel:
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                if st.button("⭐ ATIVAR"):
+                    # Desativa todos da mesma vacina
+                    for v in dados.values():
+                        if v["nome"] == vsel["nome"] and v.get("em_uso"):
+                            v["em_uso"] = False
+                            salvar_lote(v)
+                    # Ativa o selecionado
+                    dados[vid]["em_uso"] = True
+                    salvar_lote(dados[vid])
+                    registrar_log("ATIVAR", vsel["nome"], vsel["lote"], 0, "")
+                    st.session_state.dados = carregar_dados()
+                    st.success("✅ Ativado!")
+                    st.rerun()
+            with c2:
+                with st.popover("📤 BAIXA"):
+                    q = st.number_input("Quantidade", min_value=1, step=1)
+                    obs = st.text_area("Observação")
+                    if st.button("CONFIRMAR"):
+                        if q <= vsel.get("quantidade", 0):
+                            dados[vid]["quantidade"] = vsel.get("quantidade", 0) - q
+                            salvar_lote(dados[vid])
+                            registrar_log("BAIXA", vsel["nome"], vsel["lote"], q, obs)
+                            registrar_evento_auto(f"Baixa de {q} und - {vsel['lote']}", obs)
+                            st.session_state.dados = carregar_dados()
+                            st.success(f"✅ -{q} unidades!")
+                            st.rerun()
+                        else:
+                            st.error("Estoque insuficiente!")
+            with c3:
+                if st.button("🗑️ REMOVER", use_container_width=True):
+                    if vsel.get("em_uso", False):
+                        st.warning(f"⚠️ '{vsel['nome']}' está EM USO! Removendo mesmo assim...")
+                    remover_lote(vsel["nome"], vsel["lote"])
+                    registrar_log("REMOVER LOTE", vsel["nome"], vsel["lote"], 0, "Removido" + (" (estava em uso)" if vsel.get("em_uso") else ""))
+                    st.session_state.dados = carregar_dados()
+                    st.success(f"✅ Lote '{vsel['lote']}' removido!")
+                    st.rerun()
     
-    # NOVO LOTE (mantido fora)
     st.markdown("---")
     st.subheader("➕ Novo Lote")
     with st.form("novo"):
