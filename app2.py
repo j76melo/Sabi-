@@ -190,7 +190,7 @@ elif menu == "📊 ESTOQUE":
                 "Estoque": v.get("quantidade",0), 
                 "Mínimo": v.get("minimo",30), 
                 "Status": s, 
-                "Situação": "⭐ EM USO" if v.get("em_uso") else "⚪"
+                "Situação": "⭐ EM USO" if v.get("em_uso") else "⚪ ESTOQUE"
             })
         
         # Tabela clicável
