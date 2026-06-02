@@ -170,7 +170,7 @@ if menu == "💉 VACINAS EM USO":
         st.info("Nenhuma vacina em uso.")
 
 # ========== TELA 2 ==========
-# ========== TELA 2 ==========
+#fafefifofudeu
 elif menu == "📊 ESTOQUE":
     st.subheader("📊 Estoque")
     
@@ -239,9 +239,9 @@ elif menu == "📊 ESTOQUE":
                             vsel["minimo"] = novo_minimo
                             vsel["em_uso"] = em_uso
                             
-                            # Salva no Supabase
+                            # Salva no Supabase#
                             try:
-                                supabase.table("vacinas").update(vsel).eq("id", vsel["id"]).execute()
+                                salvar_lote(vsel)
                                 registrar_log("EDIÇÃO", vsel["nome"], vsel["lote"], nova_qtde, f"Editado via pop-up")
                                 st.session_state.dados = carregar_dados()
                                 st.success("✅ Alterações salvas com sucesso!")
